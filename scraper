@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+#set -x
+set -e
+set -o pipefail
+set -u
+
+bin=$(cd $(dirname "$0") > /dev/null; pwd)
+
+. $bin/config.env
+
+request() {
+  local readonly date="$1"
+  curl 'https://api.trainerize.com/v03/dailyNutrition/Get' \
+    -s \
+    -H "Authorization: $AUTH" \
+    -H 'Origin: https://proshapefitness.trainerize.com' \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Accept-Language: en-US,en;q=0.8' \
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36' \
+    -H "dateToday: $NOW" \
+    -H 'Content-Type: application/json; charset=UTF-8' \
+    -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+    -H "Referer: https://proshapefitness.trainerize.com/app/client/$USER_ID/calendar" \
+    -H 'Connection: keep-alive' \
+    -H 'TR-From: web' \
+    -H 'DNT: 1' \
+    --data-binary "{\"userID\":$USER_ID,\"date\":\"$date\"}" \
+    --compressed  | jq --compact-output  '.nutrition | [.date, .carbsGrams, .fatGrams, .proteinGrams]'
+}
+
+scrape() {
+  local readonly now=$(date +'%s')
+  local readonly days=${1:-14}
+  for i in $(seq 0 $days)
+  do
+    request $(date -d @$now +'%Y-%m-%d')
+    now=$(( $now - 86400 ))
+  done
+}
+
+scrape "$@"
