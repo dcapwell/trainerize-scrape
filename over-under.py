@@ -21,4 +21,4 @@ with open(path, "rU") as f:
         row[1] = row[1] - carb
         row[2] = row[2] - fat
         row[3] = row[3] - protein
-        print(row)
+        print("%s\t%s\t%s\t%s" % (row[0], row[1], row[2], row[3]))
