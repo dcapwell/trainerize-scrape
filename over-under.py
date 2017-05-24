@@ -18,7 +18,7 @@ path = sys.argv[1]
 with open(path, "rU") as f:
     for line in f.readlines():
         row = json.loads(line.strip())
-        row[1] = carb - row[1]
-        row[2] = fat - row[2]
-        row[3] = protein - row[3]
+        row[1] = row[1] - carb
+        row[2] = row[2] - fat
+        row[3] = row[3] - protein
         print(row)
