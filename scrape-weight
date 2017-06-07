@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+#set -x
+set -e
+set -o pipefail
+set -u
+
+bin=$(cd $(dirname "$0") > /dev/null; pwd)
+
+. $bin/config.env
+
+_main() {
+  curl 'http://www.myfitnesspal.com/reports/results/progress/1/14.json?report_name=Weight&' \
+    -s \
+    -H "Cookie: $MY_FITNESS_PAL_COOKIE" \
+    --compressed | jq  --compact-output '.data[] |  [.date, .total]' | tr ',' '\t' | sed 's;\[;;g' | sed 's;\];;g'
+
+}
+
+_main "$@"
