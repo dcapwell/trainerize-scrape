@@ -7,6 +7,11 @@ set -u
 
 bin=$(cd $(dirname "$0") > /dev/null; pwd)
 
+# Configurations required
+#export NOW=${NOW:-$(date +'%Y-%m-%d %H:%M:%S')}
+#export DATE=${DATE:-$(date +'%Y-%m-%d')}
+#export USER_ID
+#export AUTH
 . $bin/config.env
 
 request() {
